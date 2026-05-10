@@ -47,7 +47,29 @@ if [[ -z "$URL" ]]; then
   usage
 fi
 
-echo "URL:         $URL"
-echo "API Key:     $API_KEY"
-echo "Folder Name: $FOLDER_NAME"
-echo "Backup Folder: $BACKUP_FOLDER"
+
+# Get all repos
+page=1
+repos=()
+while true; do
+  response=$(curl -s -H "Authorization: token $API_KEY" "$URL/api/v1/repos/search?limit=50&page=$page")
+
+  new_repos=$(echo "$response" | jq -c '.data | to_entries[] | .value')
+  while IFS= read -r repo; do
+    repos+=("$repo")
+  done <<< "$new_repos"
+
+  count=$(echo "$response" | jq '.data | length')
+  [ "$count" -lt 50 ] && break
+  ((page++))
+done
+
+
+# Clone the repos
+for repo in "${repos[@]}"; do
+  name=$(echo "$repo" | jq -r '.name')
+  owner=$(echo "$repo" | jq -r '.owner.login')
+  clone_url=$(echo "$repo" | jq -r '.clone_url')
+
+  echo "Backing up $owner/$name from $clone_url"
+done
