@@ -52,7 +52,7 @@ fi
 page=1
 repos=()
 while true; do
-  response=$(curl -s -H "Authorization: token $API_KEY" "$URL/api/v1/repos/search?limit=50&page=$page")
+  response=$(curl -s -H "Authorization: token $API_KEY" "https://$URL/api/v1/repos/search?limit=50&page=$page")
 
   new_repos=$(echo "$response" | jq -c '.data | to_entries[] | .value')
   while IFS= read -r repo; do
@@ -64,12 +64,39 @@ while true; do
   ((page++))
 done
 
+TEMP_BACKUP_FOLDER='/tmp/gitea-temp-backups'
 
-# Clone the repos
+# Backup the repos
 for repo in "${repos[@]}"; do
   name=$(echo "$repo" | jq -r '.name')
   owner=$(echo "$repo" | jq -r '.owner.login')
-  clone_url=$(echo "$repo" | jq -r '.clone_url')
+  full_name=$(echo "$repo" | jq -r '.full_name')
+  updated_at=$(echo "$repo" | jq -r '.updated_at')
 
-  echo "Backing up $owner/$name from $clone_url"
+  updated_at=$(echo "$updated_at" | tr -d ':-')
+  file_name="${name}_${updated_at}.zip"
+  backup_dest="$BACKUP_FOLDER/$FOLDER_NAME/$owner/$name/$file_name"
+
+  if [ -f "$backup_dest" ]; then
+    echo "Backup for $owner/$name already exists at $backup_dest, skipping..."
+    continue
+  fi
+
+  echo "Backing up $owner/$name"
+
+  clone_dest="$TEMP_BACKUP_FOLDER/$FOLDER_NAME/$owner/$name"
+  temp_zip_dest="$TEMP_BACKUP_FOLDER/$FOLDER_NAME/$owner/$name/$file_name"
+
+  if [ -d "$clone_dest" ]; then
+    rm -rf "$clone_dest"
+  fi
+  if [ -f "$temp_zip_dest" ]; then
+    rm -f "$temp_zip_dest"
+  fi
+
+  git clone "https://$API_KEY@$URL/$full_name.git" "$clone_dest" --quiet
+
+  zip -q -r "$temp_zip_dest" "$clone_dest"
+  mkdir -p "$(dirname "$backup_dest")"
+  mv "$temp_zip_dest" "$backup_dest"
 done

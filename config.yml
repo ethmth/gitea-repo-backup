@@ -1,12 +1,12 @@
 gitea:
   git:
-    url: https://git.ethanmt.com
+    url: git.ethanmt.com
     api-key: ${GITEA_API_KEY}
     folder-name: gitea
     schedule: "* * * * *"
 
   git-public:
-    url: https://git-public.ethanmt.com
+    url: git-public.ethanmt.com
     api-key: ${GITEA_PUBLIC_API_KEY}
     folder-name: gitea-public
     schedule: "* * * * *"
