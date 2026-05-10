@@ -2,7 +2,7 @@ services:
   gitea-repo-backup:
     build:
       context: .
-      image: gitea-repo-backup:latest
+    image: gitea-repo-backup:latest
     container_name: gitea-repo-backup
     restart: unless-stopped
     environment:
@@ -10,3 +10,4 @@ services:
       - GITEA_PUBLIC_API_KEY=${GITEA_PUBLIC_API_KEY}
     volumes:
       - ./config.yml:/app/config.yml:ro
+      - ./backups:/app/backups

@@ -1,16 +1,13 @@
-FROM python:3.12-slim
+FROM debian:trixie-slim
 
 WORKDIR /app
 
-ENV PYTHONUNBUFFERED=1
-
 RUN apt-get update \
     && apt-get install -y cron yq jq \
-    && python3 -m pip install --no-cache-dir pyyaml \
     && rm -rf /var/lib/apt/lists/*
 
 COPY src /app/src
 
-RUN chmod +x /app/src/*.sh /app/src/*.py
+RUN chmod +x /app/src/*.sh
 
-ENTRYPOINT ["/app/src/start.sh"]
+ENTRYPOINT ["/app/src/docker-entrypoint.sh"]
