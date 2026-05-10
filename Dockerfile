@@ -3,7 +3,7 @@ FROM debian:trixie-slim
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y cron yq jq \
+    && apt-get install -y cron yq jq curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY src /app/src
