@@ -103,7 +103,7 @@ for repo in "${repos[@]}"; do
 
   git clone "https://$API_KEY@$URL/$full_name.git" "$clone_dest" --quiet
 
-  zip -q -r "$temp_zip_dest" "$clone_dest"
+  (cd "$(dirname "$clone_dest")" && zip -q -r "$temp_zip_dest" "$(basename "$clone_dest")")
   mkdir -p "$(dirname "$backup_dest")"
   mv "$temp_zip_dest" "$backup_dest"
 done
