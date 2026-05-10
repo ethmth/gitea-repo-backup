@@ -3,10 +3,10 @@ gitea:
     url: git.ethanmt.com
     api-key: ${GITEA_API_KEY}
     folder-name: gitea
-    schedule: "* * * * *"
+    schedule: "0 * * * *"
 
   git-public:
     url: git-public.ethanmt.com
     api-key: ${GITEA_PUBLIC_API_KEY}
     folder-name: gitea-public
-    schedule: "* * * * *"
+    schedule: "0 * * * *"
