@@ -56,7 +56,9 @@ while true; do
 
   new_repos=$(echo "$response" | jq -c '.data | to_entries[] | .value')
   while IFS= read -r repo; do
-    repos+=("$repo")
+    if ! [[ -z "$repo" ]]; then
+      repos+=("$repo")
+    fi
   done <<< "$new_repos"
 
   count=$(echo "$response" | jq '.data | length')
