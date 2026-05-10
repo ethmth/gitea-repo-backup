@@ -73,6 +73,11 @@ for repo in "${repos[@]}"; do
   full_name=$(echo "$repo" | jq -r '.full_name')
   updated_at=$(echo "$repo" | jq -r '.updated_at')
 
+  if [[ -z "$name" || -z "$owner" || -z "$full_name" || -z "$updated_at" ]]; then
+    echo "Skipping repo with missing information: $repo"
+    continue
+  fi
+
   updated_at=$(echo "$updated_at" | tr -d ':-')
   file_name="${name}_${updated_at}.zip"
   backup_dest="$BACKUP_FOLDER/$FOLDER_NAME/$owner/$name/$file_name"
