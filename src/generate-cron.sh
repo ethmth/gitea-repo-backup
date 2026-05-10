@@ -13,5 +13,5 @@ while IFS= read -r entry; do
     schedule=$(echo "$entry" | jq -r '.["schedule"]')
     api_key=$(echo "$entry" | jq -r '.["api-key"]')
     folder_name=$(echo "$entry" | jq -r '.["folder-name"]')
-    echo "$schedule $(whoami) /app/src/start.sh --url '$url' --api-key '$api_key' --folder-name '$folder_name' >> /var/log/cron.log 2>&1"
+    echo "$schedule $(whoami) /app/src/gitea-backup.sh --url '$url' --api-key '$api_key' --folder-name '$folder_name' --backup-folder '/app/backups' --env-file '/app/.env' >> /var/log/cron.log 2>&1"
 done <<< "$entries"
